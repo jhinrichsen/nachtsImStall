@@ -1,2 +1,8 @@
-# nachtsImStall
-A monte  carlo simulation for the children's game "Nachts im Stall"
+= nachtsImStall
+
+image::https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat[Standard, link=https://github.com/feross/standard]
+
+A monte  carlo simulation for the children's game "Nachts im Stall".
+We've been trying and trying, but never managed to win.
+According to this tiny simulation, changes are about 1/3...
+
