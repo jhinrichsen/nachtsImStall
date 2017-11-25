@@ -1,66 +1,41 @@
-package main
+package nachtsImStall
 
 import (
 	"math/rand"
 )
 
-// There are 3 cows, sheeps, cats, and pigs each
-const nTotalAnimals = 3 * 4
-
-// 5 portions of hay
-const nTotalHay = 5
-
-// State represents a game
-type State struct {
-	nAwake, nHay int
-}
-
-// NewGame starts a fresh game
-func NewGame() State {
-	return State{nTotalAnimals, nTotalHay}
-}
-
-func (a State) isWon() bool {
-	return a.nAwake == 0
-}
-
-func (a State) isLost() bool {
-	return a.nHay < 0
-}
-
-func (a *State) cock() {
-	a.nAwake = nTotalAnimals
-}
-
-func (a *State) hay() {
-	a.nHay--
-}
-
-func (a *State) moon() {
-	a.nAwake--
-}
-
-func (a *State) step() {
-	var fns = []func(a *State){
-		(*State).hay,
-		(*State).cock,
-		(*State).moon, (*State).moon, (*State).moon, (*State).moon,
-	}
-	fn := fns[rand.Intn(len(fns))]
-	fn(a)
-	// log.Printf("State: %+v\n", a)
-}
-
 // Play plays a full game and returns true if game is won.
 // You need to rand.Seed() yourself if you want random behaviour
-func (a State) Play() bool {
+func Play() bool {
+	// All animals are awake
+	awake := 12
+	hay := 5
 	for {
-		if a.isWon() {
+		// throw a regular 6-sided dice
+		switch rand.Intn(6) {
+
+		// Hay: decrease number of hays
+		case 0:
+			hay--
+
+		// Cock awakes all animals
+		case 1:
+			awake = 12
+
+		// Moon makes one animal go asleep
+		default:
+			awake--
+
+		}
+
+		// A game is won if all animals are asleep
+		if awake == 0 {
 			return true
 		}
-		if a.isLost() {
+
+		// Game is lost if no more hay
+		if hay < 0 {
 			return false
 		}
-		a.step()
 	}
 }
