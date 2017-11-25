@@ -13,4 +13,32 @@ The implementation is making heavy use of functional and ES 2015 features, namel
 - map, reduce
 - const, arrow functions
 
-Look mom - no 'for' loops! And who did say that OO is the best for simulation?
+Look mom - no `for` loops! And who did say that OO is the best for simulation?
+
+
+Rules[https://cdn.haba.de/content/medias/manual/4676-mes-nachts-im-stall-spielanleitung-6s.pdf]
+
+== Performance
+
+Macbook pro Late 2013, 2.3 GHz Intel Core i7, 16 GB, Node.js 8.9.1:
+
+=== Node.js/ Javascript version:
+----
+Winning 290825 out of 1000000 games.
+node main.js  10.50s user 0.03s system 99% cpu 10.529 total
+----
+
+Go version:
+----
+% go test -bench=.
+2017/11/25 17:16:07 Won: true
+2017/11/25 17:16:07 Win rate: 27%
+goos: darwin
+goarch: amd64
+pkg: github.com/jhinrichsen/nachtsImStall
+BenchmarkManyGames-8   	 1000000	      1560 ns/op
+PASS
+ok  	github.com/jhinrichsen/nachtsImStall	1.586s
+----
+
+
