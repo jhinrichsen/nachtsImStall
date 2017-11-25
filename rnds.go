@@ -17,12 +17,15 @@ func stdlibs() int {
 }
 
 func devUrandom(n int) func() int {
-	buf := readDevUrandom(n)
-	idx := 0
+	// lazy reads
+	var buf []byte
+	idx := n
 	return func() int {
-		if idx >= len(buf) {
-			log.Printf("Accessing illegal index %d, len %d\n",
-				idx, len(buf))
+		// new buffer if current one is exhausted
+		if idx+1 >= n {
+			// log.Println("Refilling entropy buffer")
+			buf = readDevUrandom(n)
+			idx = 0
 		}
 		m := int(buf[idx])
 		idx++

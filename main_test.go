@@ -5,9 +5,18 @@ import (
 	"testing"
 )
 
-func TestOneGame(t *testing.T) {
-	won := Play(stdlibs)
-	log.Printf("Won: %v\n", won)
+// Most games should be settled after this number of rolls
+const mostRolls = 64
+
+func TestOneGameStdlibs(t *testing.T) {
+	won, rolls := Play(stdlibs)
+	log.Printf("stdlibs: Won: %v after %d rolls\n", won, rolls)
+}
+
+func TestOneGameDevUrandom(t *testing.T) {
+	f := devUrandom(mostRolls)
+	won, rolls := Play(f)
+	log.Printf("/dev/urandom: Won: %v after %d rolls\n", won, rolls)
 }
 
 // ration in %
@@ -17,24 +26,26 @@ func ratio(won, n int) int {
 
 func TestManyGamesStdlib(t *testing.T) {
 	n := 10000
-	won := 0
+	total := 0
 	for i := 0; i < n; i++ {
-		if Play(stdlibs) {
-			won++
+		won, _ := Play(stdlibs)
+		if won {
+			total++
 		}
 	}
-	log.Printf("Win rate(stdlibs): %d%%\n", ratio(won, n))
+	log.Printf("Win rate(stdlibs): %d%%\n", ratio(total, n))
 }
 
 func TestManyGamesDevUrandom(t *testing.T) {
-	won := 0
 	n := 1000
+	total := 0
 	for i := 0; i < n; i++ {
-		if Play(devUrandom(n)) {
-			won++
+		won, _ := Play(devUrandom(mostRolls))
+		if won {
+			total++
 		}
 	}
-	log.Printf("Win rate(/dev/urandom): %d%%\n", ratio(won, n))
+	log.Printf("Win rate(/dev/urandom): %d%%\n", ratio(total, n))
 }
 
 func BenchmarkGamesStdlib(b *testing.B) {
@@ -44,8 +55,8 @@ func BenchmarkGamesStdlib(b *testing.B) {
 }
 
 func BenchmarkGamesDevUrandom(b *testing.B) {
+	f := devUrandom(b.N * mostRolls)
 	for n := 0; n < b.N; n++ {
-		f := devUrandom(b.N)
 		Play(f)
 	}
 }
@@ -54,7 +65,7 @@ func TestDevUrandom(t *testing.T) {
 	readDevUrandom(1)
 }
 
-func BenchmarkManySmallReads(b *testing.B) {
+func BenchmarkReadManySmallReads(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		for i := 0; i < 1e6; i++ {
 			readDevUrandom(6)
@@ -62,7 +73,7 @@ func BenchmarkManySmallReads(b *testing.B) {
 	}
 }
 
-func BenchmarkOneLarge(b *testing.B) {
+func BenchmarkReadOneLarge(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		readDevUrandom(6e6)
 	}
@@ -73,7 +84,7 @@ func TestRndStdlibs(t *testing.T) {
 }
 
 func TestRndDevUrandom(t *testing.T) {
-	f := devUrandom(10000)
+	f := devUrandom(10000 * mostRolls)
 	rndTest(t, 10000, f)
 }
 
